@@ -17,6 +17,13 @@ export class TasksService {
     @InjectRepository(Task)
     private tasksRepository: Repository<Task>,
   ) {}
+
+  async getTasks(filterDTO: GetTasksFilterDTO): Promise<Task[]> {
+    const query = this.tasksRepository.createQueryBuilder('task');
+    const tasks = await query.getMany()
+    return tasks
+
+  }
   //   getAllTasks(): Task[] {
   //     return this.tasks;
   //   }
@@ -61,7 +68,6 @@ export class TasksService {
 
   async updateTaskStatus(id: string, status: TaskStatus): Promise<Task> {
     const taskToUpdate = await this.getTaskById(id);
-
     taskToUpdate.status = status;
     await this.tasksRepository.save(taskToUpdate);
     return taskToUpdate;
@@ -69,7 +75,6 @@ export class TasksService {
 
   async createTask(createTaskDto: CreateTaskDto): Promise<Task> {
     const { title, description } = createTaskDto;
-
     const task = this.tasksRepository.create({
       title,
       description,

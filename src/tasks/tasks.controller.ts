@@ -20,13 +20,14 @@ import { TasksService } from './tasks.service';
 export class TasksController {
   constructor(private tasksService: TasksService) {}
 
-  //   @Get()
-  //   getTasks(@Query() filterDTO: GetTasksFilterDTO): Task[] {
-  //     if (Object.keys(filterDTO).length) {
-  //       return this.tasksService.getTasksWithFilters(filterDTO);
-  //     }
-  //     return this.tasksService.getAllTasks();
-  //   }
+  @Get()
+  getTasks(@Query() filterDTO: GetTasksFilterDTO): Promise<Task[]> {
+    // if (Object.keys(filterDTO).length) {
+    //   return this.tasksService.getTasksWithFilters(filterDTO);
+    // }
+    // return this.tasksService.getAllTasks();
+    return this.tasksService.getTasks(filterDTO);
+  }
 
   @Get('/:id')
   getTaskById(@Param('id') id: string): Promise<Task> {
@@ -43,12 +44,12 @@ export class TasksController {
     return this.tasksService.createTask(createTaskDto);
   }
 
-    @Patch('/:id/status')
-    updateTaskStatus(
-      @Param('id') id: string,
-      @Body() updateTaskStatusDto: UpdateTaskStatusDTO,
-    ) {
-      const { status } = updateTaskStatusDto;
-      return this.tasksService.updateTaskStatus(id, status);
-    }
+  @Patch('/:id/status')
+  updateTaskStatus(
+    @Param('id') id: string,
+    @Body() updateTaskStatusDto: UpdateTaskStatusDTO,
+  ) {
+    const { status } = updateTaskStatusDto;
+    return this.tasksService.updateTaskStatus(id, status);
+  }
 }
