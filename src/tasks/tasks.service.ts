@@ -21,49 +21,25 @@ export class TasksService {
   async getTasks(filterDTO: GetTasksFilterDTO): Promise<Task[]> {
     const { status, search } = filterDTO;
     console.log('status', status, 'search', search);
-    const query = this.tasksRepository.createQueryBuilder('task');
+    let query = this.tasksRepository.createQueryBuilder('task').select('task');
     if (status) {
-      query.andWhere('task.status = :status', { status: status });
+      query = query.andWhere('task.status = :status', { status: status });
     }
     if (search) {
-      query.andWhere(
+      query = query.andWhere(
         'LOWER(task.title) LIKE LOWER(:search) OR LOWER(task.description) LIKE LOWER(:search)',
         {
           search: `%${search}%`,
         },
       );
     }
-    console.log('query', query);
+
+    console.log(query);
+
     const tasks = await query.getMany();
     console.log('tasks', tasks);
     return tasks;
   }
-  //   getAllTasks(): Task[] {
-  //     return this.tasks;
-  //   }
-  //   getTasksWithFilters(filterDTO: GetTasksFilterDTO): Task[] {
-  //     const { status, search } = filterDTO;
-  //     let tasks = this.getAllTasks();
-  //     if (status) {
-  //       tasks = tasks.filter((task) => task.status === status);
-  //     }
-  //     if (search) {
-  //       const filterBySearch = (task: Task) => {
-  //         if (
-  //           task.title.toLowerCase().includes(search) ||
-  //           task.description.toLowerCase().includes(search)
-  //         ) {
-  //           return true;
-  //         }
-  //         return false;
-  //       };
-  //       tasks = tasks.filter((task) => filterBySearch(task));
-  //     }
-  //     if (tasks.length > 0) {
-  //       return tasks;
-  //     }
-  //     throw new NotFoundException('No matching task was found');
-  //   }
 
   async getTaskById(id: string): Promise<Task> {
     const found = await this.tasksRepository.findOne({ id: id });
