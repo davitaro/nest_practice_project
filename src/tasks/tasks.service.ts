@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { TaskStatus } from './task-status.enum';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { GetTasksFilterDTO } from './dto/get-tasks-filter.dto';
@@ -18,15 +18,19 @@ export class TasksService {
     private tasksRepository: Repository<Task>,
   ) {}
 
-  async getTasks(filterDTO: GetTasksFilterDTO): Promise<Task[]> {
+  async getTasks(filterDTO: GetTasksFilterDTO, user: User): Promise<Task[]> {
     const { status, search } = filterDTO;
-    console.log('status', status, 'search', search);
-    let query = this.tasksRepository.createQueryBuilder('task').select('task');
+
+    const query = this.tasksRepository
+      .createQueryBuilder('task')
+      .select('task');
+
+    query.where({ user });
     if (status) {
-      query = query.andWhere('task.status = :status', { status: status });
+      query.andWhere('task.status = :status', { status: status });
     }
     if (search) {
-      query = query.andWhere(
+      query.andWhere(
         'LOWER(task.title) LIKE LOWER(:search) OR LOWER(task.description) LIKE LOWER(:search)',
         {
           search: `%${search}%`,
