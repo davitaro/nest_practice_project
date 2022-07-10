@@ -74,14 +74,17 @@ Nest is [MIT licensed](LICENSE).
 
 These are the dependencies that it worked with: 
 
-  "dependencies": {
+    "dependencies": {
     "@hapi/joi": "^17.1.1",
+    "@nestjs/cli": "^7.5.1",
     "@nestjs/common": "^7.5.1",
     "@nestjs/config": "^2.2.0",
     "@nestjs/core": "^7.5.1",
     "@nestjs/jwt": "^7.2.0",
     "@nestjs/passport": "^7.1.5",
     "@nestjs/platform-express": "^7.5.1",
+    "@nestjs/schematics": "^7.3.1",
+    "@nestjs/testing": "^7.5.1",
     "@nestjs/typeorm": "^7.1.5",
     "@types/passport-jwt": "^3.0.6",
     "bcrypt": "^5.0.1",
@@ -97,9 +100,6 @@ These are the dependencies that it worked with:
     "typeorm": "^0.2.32"
   },
   "devDependencies": {
-    "@nestjs/cli": "^8.0.0",
-    "@nestjs/schematics": "^8.0.0",
-    "@nestjs/testing": "^8.0.0",
     "@types/express": "^4.17.13",
     "@types/jest": "27.5.0",
     "@types/node": "^16.0.0",
@@ -118,5 +118,5 @@ These are the dependencies that it worked with:
     "ts-loader": "^9.2.3",
     "ts-node": "^10.0.0",
     "tsconfig-paths": "4.0.0",
-    "typescript": "^4.3.5"
+    "typescript": "^4.0.5"
   },

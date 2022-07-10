@@ -11,7 +11,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
   imports: [
     TasksModule,
     ConfigModule.forRoot({
-      envFilePath: [`.env.stage.${process.env.STAGE}`],
+      // envFilePath: [`.env.stage.${process.env.STAGE}`],
+      envFilePath: [`.env.stage.dev`],
       validationSchema: configValidationSchema,
     }),
     TypeOrmModule.forRootAsync({
@@ -23,7 +24,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         return {
           ssl: isProduction,
           extra: {
-            ssl: isProduction ? { rejectUnauthroized: false } : null,
+            ssl: isProduction ? { rejectUnauthorized: false } : null,
           },
           host: configService.get('DB_HOST'),
           port: configService.get('DB_PORT'),
