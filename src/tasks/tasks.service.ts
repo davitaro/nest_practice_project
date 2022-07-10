@@ -26,12 +26,13 @@ export class TasksService {
       .select('task');
 
     query.where({ user });
+
     if (status) {
       query.andWhere('task.status = :status', { status: status });
     }
     if (search) {
       query.andWhere(
-        'LOWER(task.title) LIKE LOWER(:search) OR LOWER(task.description) LIKE LOWER(:search)',
+        '(LOWER(task.title) LIKE LOWER(:search) OR LOWER(task.description) LIKE LOWER(:search))',
         {
           search: `%${search}%`,
         },
