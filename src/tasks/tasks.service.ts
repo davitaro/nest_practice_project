@@ -10,6 +10,7 @@ import { Task } from './task.entity';
 
 import { Repository } from 'typeorm';
 import { User } from 'src/auth/user.entity';
+import { UsersRepository } from 'src/auth/users.repository';
 
 @Injectable()
 export class TasksService {
@@ -39,15 +40,13 @@ export class TasksService {
       );
     }
 
-    console.log(query);
-
     const tasks = await query.getMany();
     console.log('tasks', tasks);
     return tasks;
   }
 
-  async getTaskById(id: string): Promise<Task> {
-    const found = await this.tasksRepository.findOne({ id: id });
+  async getTaskById(id: string, user: User): Promise<Task> {
+    const found = await this.tasksRepository.findOne({ where: { id, user } });
     if (!found) {
       throw new NotFoundException(`Task with id ${id} was not found`);
     }
@@ -61,8 +60,12 @@ export class TasksService {
     }
   }
 
-  async updateTaskStatus(id: string, status: TaskStatus): Promise<Task> {
-    const taskToUpdate = await this.getTaskById(id);
+  async updateTaskStatus(
+    id: string,
+    status: TaskStatus,
+    user: User,
+  ): Promise<Task> {
+    const taskToUpdate = await this.getTaskById(id, user);
     taskToUpdate.status = status;
     await this.tasksRepository.save(taskToUpdate);
     return taskToUpdate;
