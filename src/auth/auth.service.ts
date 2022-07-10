@@ -3,6 +3,7 @@ import {
   Injectable,
   InternalServerErrorException,
   UnauthorizedException,
+  Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -14,6 +15,8 @@ import { JwtPayload } from './dto/jwt-payload.interface';
 
 @Injectable()
 export class AuthService {
+  private logger = new Logger('AuthService', { timestamp: true });
+
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
@@ -33,6 +36,10 @@ export class AuthService {
     try {
       await this.usersRepository.save(user);
     } catch (error) {
+      this.logger.error(
+        `Failed to create user: ${JSON.stringify(authCredentialsDto)}`,
+        error.stack,
+      );
       if (error.code === '23505') {
         throw new ConflictException('A user already exists with this username');
       } else {
@@ -52,6 +59,11 @@ export class AuthService {
       const accessToken: string = await this.jwtService.sign(payload);
       return { accessToken };
     } else {
+      this.logger.error(
+        `Failed to sign in with these credentials: ${JSON.stringify(
+          authCredentialsDto,
+        )}`,
+      );
       throw new UnauthorizedException('Please check your login credentials');
     }
   }

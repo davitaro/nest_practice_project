@@ -1,6 +1,11 @@
 /* eslint-disable prettier/prettier */
 
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  Logger,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { TaskStatus } from './task-status.enum';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { GetTasksFilterDTO } from './dto/get-tasks-filter.dto';
@@ -14,6 +19,8 @@ import { UsersRepository } from 'src/auth/users.repository';
 
 @Injectable()
 export class TasksService {
+  private logger = new Logger('TasksService', { timestamp: true });
+
   constructor(
     @InjectRepository(Task)
     private tasksRepository: Repository<Task>,
@@ -40,9 +47,18 @@ export class TasksService {
       );
     }
 
-    const tasks = await query.getMany();
-    console.log('tasks', tasks);
-    return tasks;
+    try {
+      const tasks = await query.getMany();
+      return tasks;
+    } catch (error) {
+      this.logger.error(
+        `Failed to get tasks for user: ${
+          user.username
+        }. Filters: ${JSON.stringify(filterDTO)}`,
+        error.stack,
+      );
+      throw new InternalServerErrorException();
+    }
   }
 
   async getTaskById(id: string, user: User): Promise<Task> {
@@ -67,8 +83,15 @@ export class TasksService {
   ): Promise<Task> {
     const taskToUpdate = await this.getTaskById(id, user);
     taskToUpdate.status = status;
-    await this.tasksRepository.save(taskToUpdate);
-    return taskToUpdate;
+    try {
+      await this.tasksRepository.save(taskToUpdate);
+      return taskToUpdate;
+    } catch (error) {
+      this.logger.error(
+        `Failed to save updated task status for user: ${user.username}. New Status: ${status}`,
+        error.stack,
+      );
+    }
   }
 
   async createTask(createTaskDto: CreateTaskDto, user: User): Promise<Task> {
@@ -79,8 +102,16 @@ export class TasksService {
       status: TaskStatus.OPEN,
       user,
     });
-
-    await this.tasksRepository.save(task);
-    return task;
+    try {
+      await this.tasksRepository.save(task);
+      return task;
+    } catch (error) {
+      this.logger.error(
+        `Failed to save newly created task for user: ${
+          user.username
+        }. New task: ${JSON.stringify(task)}`,
+        error.stack,
+      );
+    }
   }
 }

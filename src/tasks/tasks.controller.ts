@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 
 import {
+  Logger,
   Body,
   Controller,
   Delete,
@@ -23,6 +24,8 @@ import { TasksService } from './tasks.service';
 @Controller('tasks')
 @UseGuards(AuthGuard())
 export class TasksController {
+  private logger = new Logger('TasksController', { timestamp: true });
+
   constructor(private tasksService: TasksService) {}
 
   @Get()
@@ -30,11 +33,19 @@ export class TasksController {
     @Query() filterDTO: GetTasksFilterDTO,
     @GetUser() user: User,
   ): Promise<Task[]> {
+    this.logger.verbose(
+      `User: ${user.username}, retrieving tasks. Filters: ${JSON.stringify(
+        filterDTO,
+      )}`,
+    );
     return this.tasksService.getTasks(filterDTO, user);
   }
 
   @Get('/:id')
   getTaskById(@Param('id') id: string, @GetUser() user: User): Promise<Task> {
+    this.logger.verbose(
+      `User: ${user.username}, retrieving task with id ${id}`,
+    );
     return this.tasksService.getTaskById(id, user);
   }
 
@@ -43,7 +54,8 @@ export class TasksController {
     @Param('id') id: string,
     @GetUser() user: User,
   ): Promise<void> {
-    return this.tasksService.deleteTaskById(id,user);
+    this.logger.verbose(`User: ${user.username}, deleted task with id ${id}`);
+    return this.tasksService.deleteTaskById(id, user);
   }
 
   @Post()
@@ -51,6 +63,13 @@ export class TasksController {
     @Body() createTaskDto: CreateTaskDto,
     @GetUser() user: User,
   ): Promise<Task> {
+    this.logger.verbose(
+      `User: ${
+        user.username
+      } is attempting to create a task with these details: ${JSON.stringify(
+        createTaskDto,
+      )}`,
+    );
     return this.tasksService.createTask(createTaskDto, user);
   }
 
@@ -61,6 +80,9 @@ export class TasksController {
     @GetUser() user: User,
   ) {
     const { status } = updateTaskStatusDto;
+    this.logger.verbose(
+      `User: ${user.username} is attempting to update the status of task with id ${id} to ${status}`,
+    );
     return this.tasksService.updateTaskStatus(id, status, user);
   }
 }
