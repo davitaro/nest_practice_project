@@ -33,6 +33,7 @@ export class AuthService {
       username,
       password: hashedPassword,
     });
+    console.log('user', user);
     try {
       await this.usersRepository.save(user);
     } catch (error) {
