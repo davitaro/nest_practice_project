@@ -6,7 +6,7 @@ import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 
 @Controller('auth')
 export class AuthController {
-  private logger = new Logger('AuthController', { timestamp: true });
+  private logger = new Logger('AuthController', true);
   constructor(private authService: AuthService) {}
 
   @Post('/signup')

@@ -19,7 +19,7 @@ import { UsersRepository } from 'src/auth/users.repository';
 
 @Injectable()
 export class TasksService {
-  private logger = new Logger('TasksService', { timestamp: true });
+  private logger = new Logger('TasksService', true);
 
   constructor(
     @InjectRepository(Task)

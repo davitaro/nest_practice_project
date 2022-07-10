@@ -24,7 +24,7 @@ import { TasksService } from './tasks.service';
 @Controller('tasks')
 @UseGuards(AuthGuard())
 export class TasksController {
-  private logger = new Logger('TasksController', { timestamp: true });
+  private logger = new Logger('TasksController', true);
 
   constructor(private tasksService: TasksService) {}
 

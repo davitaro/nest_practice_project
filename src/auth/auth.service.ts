@@ -15,7 +15,7 @@ import { JwtPayload } from './dto/jwt-payload.interface';
 
 @Injectable()
 export class AuthService {
-  private logger = new Logger('AuthService', { timestamp: true });
+  private logger = new Logger('AuthService', true);
 
   constructor(
     @InjectRepository(User)
